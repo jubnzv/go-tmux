@@ -148,7 +148,7 @@ func (s *Session) ListPanes() ([]Pane, error) {
 }
 
 // Return name of attached tmux session.
-func (s *Session) GetAttachedSessionName() (string, error) {
+func GetAttachedSessionName() (string, error) {
     args := []string{
         "display-message",
         "-p", "#S"}

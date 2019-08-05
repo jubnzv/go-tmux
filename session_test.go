@@ -86,7 +86,7 @@ func TestGetAttachedSessionName(t *testing.T) {
     s := createSession()
 	defer sessionsReaper(s.Name)
 
-    name, err := s.GetAttachedSessionName()
+    name, err := GetAttachedSessionName()
     if err != nil {
 		t.Errorf("GetAttachedSessionName: %s", err)
     }
