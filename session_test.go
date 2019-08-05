@@ -81,3 +81,23 @@ func TestSessionListPanes(t *testing.T) {
         }
     }
 }
+
+func TestGetAttachedSessionName(t *testing.T) {
+    s := createSession()
+	defer sessionsReaper(s.Name)
+
+    _, err := s.GetAttachedSessionName()
+    if err == nil {
+        t.Errorf("GetAttachedSessionName doesn't raise error when not in tmux")
+    }
+
+    s.AttachSession()
+
+    name, err := s.GetAttachedSessionName()
+    if err != nil {
+		t.Errorf("GetAttachedSessionName: %s", err)
+    }
+    if name != s.Name {
+        t.Errorf("Incorrect session name (expected %s got %s)", s.Name, name)
+    }
+}

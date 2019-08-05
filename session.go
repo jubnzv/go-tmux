@@ -6,7 +6,6 @@ package tmux
 import (
 	"errors"
 	"fmt"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -88,7 +87,7 @@ func (s *Session) ListWindows() ([]Window, error) {
 func (s *Session) AttachSession() error {
 	args := []string{}
 	// If run inside tmux, switch the current session to the new one.
-	if os.Getenv("TMUX") == "" {
+	if IsInsideTmux() {
 		args = append(args, "attach-session", "-t", s.Name)
 	} else {
 		args = append(args, "switch-client", "-t", s.Name)
@@ -101,6 +100,17 @@ func (s *Session) AttachSession() error {
 	return nil
 }
 
+// Detach from current session.
+func (s *Session) DettachSession() error {
+    args := []string{
+        "detach-client",
+        "-s", s.Name}
+	if err := ExecCmd(args); err != nil {
+		return err
+	}
+    return nil
+}
+
 // Create a new window.
 func (s *Session) NewWindow(name string) (window Window, err error) {
 	args := []string{
@@ -109,7 +119,6 @@ func (s *Session) NewWindow(name string) (window Window, err error) {
 		"-t", fmt.Sprintf("%s:", s.Name),
 		"-n", name,
 		"-F", "#{window_id}:#{window_name}", "-P"}
-
 	out, _, err_exec := RunCmd(args)
 	if err_exec != nil {
 		return window, err_exec
@@ -136,4 +145,21 @@ func (s *Session) NewWindow(name string) (window Window, err error) {
 // Return list with all panes for this session.
 func (s *Session) ListPanes() ([]Pane, error) {
 	return ListPanes([]string{"-s", "-t", s.Name})
+}
+
+// Return name of attached tmux session.
+func (s *Session) GetAttachedSessionName() (string, error) {
+	if !IsInsideTmux() {
+        return "", errors.New("Not in tmux")
+    }
+
+    args := []string{
+        "display-message",
+        "-p", "#S"}
+	out, _, err := RunCmd(args)
+	if err != nil {
+		return "", err
+	}
+
+    return out, nil
 }

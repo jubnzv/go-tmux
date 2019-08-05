@@ -51,3 +51,12 @@ func ExecCmd(args []string) error {
 
     return nil
 }
+
+// Returns true if executed inside tmux, false otherwise.
+func IsInsideTmux() bool {
+	if os.Getenv("TMUX") == "" {
+        return true
+    } else {
+        return false
+    }
+}
