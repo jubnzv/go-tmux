@@ -148,11 +148,7 @@ func (s *Session) ListPanes() ([]Pane, error) {
 }
 
 // Return name of attached tmux session.
-func (s *Session) GetAttachedSessionName() (string, error) {
-	if !IsInsideTmux() {
-        return "", errors.New("Not in tmux")
-    }
-
+func GetAttachedSessionName() (string, error) {
     args := []string{
         "display-message",
         "-p", "#S"}
@@ -160,6 +156,9 @@ func (s *Session) GetAttachedSessionName() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+    // Remove trailing CR
+    out = out[:len(out)-1]
 
     return out, nil
 }

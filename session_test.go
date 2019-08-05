@@ -86,8 +86,15 @@ func TestGetAttachedSessionName(t *testing.T) {
     s := createSession()
 	defer sessionsReaper(s.Name)
 
-    _, err := s.GetAttachedSessionName()
-    if err == nil {
-        t.Errorf("GetAttachedSessionName doesn't raise error when not in tmux")
+    name, err := GetAttachedSessionName()
+    if err != nil {
+		t.Errorf("GetAttachedSessionName: %s", err)
+    }
+
+    // Skipped in local testing because I use it inside tmux
+    if InTravis() {
+        if name != s.Name {
+            t.Errorf("Incorrect session name (expected %s got %s)", s.Name, name)
+        }
     }
 }
