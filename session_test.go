@@ -86,8 +86,8 @@ func TestGetAttachedSessionName(t *testing.T) {
     s := createSession()
 	defer sessionsReaper(s.Name)
 
-    _, err := s.GetAttachedSessionName()
+    name, err := s.GetAttachedSessionName()
     if err == nil {
-        t.Errorf("GetAttachedSessionName doesn't raise error when not in tmux")
+        t.Errorf("GetAttachedSessionName doesn't raise error when not in tmux (got session name '%s')", name)
     }
 }
