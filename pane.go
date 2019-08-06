@@ -5,16 +5,16 @@ package tmux
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
-    "strconv"
 )
 
 type Pane struct {
 	SessionId   int
-    SessionName string
-    WindowId    int
-    WindowName  string
-    WindowIndex int
+	SessionName string
+	WindowId    int
+	WindowName  string
+	WindowIndex int
 }
 
 // Return list of panes. Optional arguments are define the search scope with
@@ -34,7 +34,7 @@ func ListPanes(args []string) ([]Pane, error) {
 
 	outLines := strings.Split(out, "\n")
 	panes := []Pane{}
-    re := regexp.MustCompile(`\$([0-9]+):(.+):@([0-9]+):(.+):([0-9]+)`)
+	re := regexp.MustCompile(`\$([0-9]+):(.+):@([0-9]+):(.+):([0-9]+)`)
 	for _, line := range outLines {
 		result := re.FindStringSubmatch(line)
 		if len(result) < 6 {
@@ -53,12 +53,12 @@ func ListPanes(args []string) ([]Pane, error) {
 			return nil, err_atoi
 		}
 
-        panes = append(panes, Pane{
-            SessionId: session_id,
-            SessionName: result[2],
-            WindowId: window_id,
-            WindowName: result[4],
-            WindowIndex: window_index})
+		panes = append(panes, Pane{
+			SessionId:   session_id,
+			SessionName: result[2],
+			WindowId:    window_id,
+			WindowName:  result[4],
+			WindowIndex: window_index})
 	}
 
 	return panes, nil

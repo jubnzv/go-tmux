@@ -32,7 +32,7 @@ func TestNewWindow(t *testing.T) {
 
 	ws, _ := s.ListWindows()
 
-    // Check created window name
+	// Check created window name
 	found := false
 	for _, w := range ws {
 		if w.Name == window.Name {
@@ -44,7 +44,7 @@ func TestNewWindow(t *testing.T) {
 		t.Errorf("Can't find created window 'test-new-window'")
 	}
 
-    // Check created window id
+	// Check created window id
 	found = false
 	for _, w := range ws {
 		if w.Id == window.Id {
@@ -53,48 +53,48 @@ func TestNewWindow(t *testing.T) {
 		}
 	}
 	if found == false {
-        t.Errorf("Can't find created window by id: %d", window.Id)
+		t.Errorf("Can't find created window by id: %d", window.Id)
 	}
 
 	if len(window.SessionName) == 0 {
-        t.Errorf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
-    }
+		t.Errorf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
+	}
 	if window.SessionName != s.Name {
-        t.Errorf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
+		t.Errorf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
 	}
 	if window.SessionId != s.Id {
-        t.Errorf("New window: incorrect session id (expected %d, got %d)", s.Id, window.SessionId)
+		t.Errorf("New window: incorrect session id (expected %d, got %d)", s.Id, window.SessionId)
 	}
 }
 
 func TestSessionListPanes(t *testing.T) {
 	s := createSession()
 	defer sessionsReaper(s.Name)
-    panes, _ := s.ListPanes()
+	panes, _ := s.ListPanes()
 
-    for _, p := range panes {
-        if p.SessionId != s.Id {
-            t.Errorf("Incorrect session id (expected %d got %d)", s.Id, p.SessionId)
-        }
-        if p.SessionName != s.Name {
-            t.Errorf("Incorrect session name (expected %s got %s)", s.Name, p.SessionName)
-        }
-    }
+	for _, p := range panes {
+		if p.SessionId != s.Id {
+			t.Errorf("Incorrect session id (expected %d got %d)", s.Id, p.SessionId)
+		}
+		if p.SessionName != s.Name {
+			t.Errorf("Incorrect session name (expected %s got %s)", s.Name, p.SessionName)
+		}
+	}
 }
 
 func TestGetAttachedSessionName(t *testing.T) {
-    s := createSession()
+	s := createSession()
 	defer sessionsReaper(s.Name)
 
-    name, err := GetAttachedSessionName()
-    if err != nil {
+	name, err := GetAttachedSessionName()
+	if err != nil {
 		t.Errorf("GetAttachedSessionName: %s", err)
-    }
+	}
 
-    // Skipped in local testing because I use it inside tmux
-    if InTravis() {
-        if name != s.Name {
-            t.Errorf("Incorrect session name (expected %s got %s)", s.Name, name)
-        }
-    }
+	// Skipped in local testing because I use it inside tmux
+	if InTravis() {
+		if name != s.Name {
+			t.Errorf("Incorrect session name (expected %s got %s)", s.Name, name)
+		}
+	}
 }

@@ -16,6 +16,8 @@ before_install:
   - sudo apt-get install -y tmux
 
 script:
+  - export GOROOT=$(go env GOROOT)
+  - ./.travis.gofmt.sh
   - go get golang.org/x/tools/cmd/cover
   - cd $HOME/gopath/src/github.com/jubnzv/go-tmux
   - yes "yes" | tmux new-session -d || true # $? == 0

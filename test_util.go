@@ -3,12 +3,14 @@
 
 package tmux
 
-import ("os")
+import (
+	"os"
+)
 
 func InTravis() bool {
 	if os.Getenv("IN_TRAVIS") == "1" {
-        return true
-    } else {
-        return false
-    }
+		return true
+	} else {
+		return false
+	}
 }

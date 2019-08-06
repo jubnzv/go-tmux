@@ -59,7 +59,7 @@ func (s *Server) ListSessions() ([]Session, error) {
 // server representation. Used for initial configuration before creating new
 // server.
 func (s *Server) AddSession(session Session) {
-    s.Sessions = append(s.Sessions, session)
+	s.Sessions = append(s.Sessions, session)
 }
 
 // Create new session with given name on this server.

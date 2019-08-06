@@ -102,13 +102,13 @@ func (s *Session) AttachSession() error {
 
 // Detach from current session.
 func (s *Session) DettachSession() error {
-    args := []string{
-        "detach-client",
-        "-s", s.Name}
+	args := []string{
+		"detach-client",
+		"-s", s.Name}
 	if err := ExecCmd(args); err != nil {
 		return err
 	}
-    return nil
+	return nil
 }
 
 // Create a new window.
@@ -149,16 +149,16 @@ func (s *Session) ListPanes() ([]Pane, error) {
 
 // Return name of attached tmux session.
 func GetAttachedSessionName() (string, error) {
-    args := []string{
-        "display-message",
-        "-p", "#S"}
+	args := []string{
+		"display-message",
+		"-p", "#S"}
 	out, _, err := RunCmd(args)
 	if err != nil {
 		return "", err
 	}
 
-    // Remove trailing CR
-    out = out[:len(out)-1]
+	// Remove trailing CR
+	out = out[:len(out)-1]
 
-    return out, nil
+	return out, nil
 }

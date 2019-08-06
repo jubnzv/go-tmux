@@ -4,20 +4,20 @@
 package tmux
 
 import (
+	"strings"
 	"testing"
-    "strings"
 )
 
 // Kills sessions that contains namePattern substring in the name.
 func sessionsReaper(namePattern string) {
-    s := new(Server)
-    // Suppose that ListSession works.
-    sessions, _ := s.ListSessions()
-    for _, ss := range sessions {
-        if strings.Contains(ss.Name, namePattern) {
-            s.KillSession(ss.Name)
-        }
-    }
+	s := new(Server)
+	// Suppose that ListSession works.
+	sessions, _ := s.ListSessions()
+	for _, ss := range sessions {
+		if strings.Contains(ss.Name, namePattern) {
+			s.KillSession(ss.Name)
+		}
+	}
 }
 
 func TestListSessions(t *testing.T) {
@@ -29,15 +29,15 @@ func TestListSessions(t *testing.T) {
 
 func TestSessionNames(t *testing.T) {
 	s := new(Server)
-    _, err := s.NewSession(".");
+	_, err := s.NewSession(".")
 	if err == nil {
 		t.Errorf("Session with restricted name was created")
 	}
-    _, err = s.NewSession(":");
+	_, err = s.NewSession(":")
 	if err == nil {
 		t.Errorf("Session with restricted name was created")
 	}
-    _, err = s.NewSession("111:");
+	_, err = s.NewSession("111:")
 	if err == nil {
 		t.Errorf("Session with restricted name was created")
 	}
@@ -45,50 +45,50 @@ func TestSessionNames(t *testing.T) {
 
 func TestNewSession(t *testing.T) {
 	s := new(Server)
-    session, err := s.NewSession("test-new-session");
+	session, err := s.NewSession("test-new-session")
 	if err != nil {
 		t.Errorf("NewSession: %s", err)
 	}
-    defer sessionsReaper("test-new-session")
-    sessions, _ := s.ListSessions()
+	defer sessionsReaper("test-new-session")
+	sessions, _ := s.ListSessions()
 
-    // Check created session name
-    found := false
-    for _, isession := range sessions {
-        if isession.Name == session.Name {
-            found = true
-            break
-        }
-    }
-    if found == false {
-        t.Errorf("Can't find created session by name: %s", session.Name)
-    }
+	// Check created session name
+	found := false
+	for _, isession := range sessions {
+		if isession.Name == session.Name {
+			found = true
+			break
+		}
+	}
+	if found == false {
+		t.Errorf("Can't find created session by name: %s", session.Name)
+	}
 
-    // Check created session id
-    found = false
-    for _, isession := range sessions {
-        t.Logf("%d -- %d", isession.Id, session.Id)
-        if isession.Id == session.Id {
-            found = true
-            break
-        }
-    }
-    if found == false {
-        t.Errorf("Can't find created session by id: %d", session.Id)
-    }
+	// Check created session id
+	found = false
+	for _, isession := range sessions {
+		t.Logf("%d -- %d", isession.Id, session.Id)
+		if isession.Id == session.Id {
+			found = true
+			break
+		}
+	}
+	if found == false {
+		t.Errorf("Can't find created session by id: %d", session.Id)
+	}
 }
 
 func TestHasSession(t *testing.T) {
 	s := new(Server)
 	s.NewSession("test-has-session")
-    defer sessionsReaper("test-has-session")
-    has, err := s.HasSession("test-has-session")
+	defer sessionsReaper("test-has-session")
+	has, err := s.HasSession("test-has-session")
 	if err != nil {
 		t.Errorf("HasSession: %s", err)
 	}
-    if has == false {
-        t.Errorf("Can't find created session: 'test-has-session'")
-    }
+	if has == false {
+		t.Errorf("Can't find created session: 'test-has-session'")
+	}
 	s.KillSession("test-has-session")
 }
 
