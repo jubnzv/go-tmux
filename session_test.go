@@ -17,7 +17,7 @@ func TestListWindows(t *testing.T) {
 	s := createSession()
 	defer sessionsReaper(s.Name)
 	if _, err := s.ListWindows(); err != nil {
-		t.Errorf("ListWindows: %s", err)
+		t.Fatalf("ListWindows: %s", err)
 	}
 }
 
@@ -27,7 +27,7 @@ func TestNewWindow(t *testing.T) {
 
 	window, err := s.NewWindow("test-new-window")
 	if err != nil {
-		t.Errorf("NewWindow: %s", err)
+		t.Fatalf("NewWindow: %s", err)
 	}
 
 	ws, _ := s.ListWindows()
@@ -41,7 +41,7 @@ func TestNewWindow(t *testing.T) {
 		}
 	}
 	if found == false {
-		t.Errorf("Can't find created window 'test-new-window'")
+		t.Fatalf("Can't find created window 'test-new-window'")
 	}
 
 	// Check created window id
@@ -53,17 +53,17 @@ func TestNewWindow(t *testing.T) {
 		}
 	}
 	if found == false {
-		t.Errorf("Can't find created window by id: %d", window.Id)
+		t.Fatalf("Can't find created window by id: %d", window.Id)
 	}
 
 	if len(window.SessionName) == 0 {
-		t.Errorf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
+		t.Fatalf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
 	}
 	if window.SessionName != s.Name {
-		t.Errorf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
+		t.Fatalf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
 	}
 	if window.SessionId != s.Id {
-		t.Errorf("New window: incorrect session id (expected %d, got %d)", s.Id, window.SessionId)
+		t.Fatalf("New window: incorrect session id (expected %d, got %d)", s.Id, window.SessionId)
 	}
 }
 
@@ -74,10 +74,10 @@ func TestSessionListPanes(t *testing.T) {
 
 	for _, p := range panes {
 		if p.SessionId != s.Id {
-			t.Errorf("Incorrect session id (expected %d got %d)", s.Id, p.SessionId)
+			t.Fatalf("Incorrect session id (expected %d got %d)", s.Id, p.SessionId)
 		}
 		if p.SessionName != s.Name {
-			t.Errorf("Incorrect session name (expected %s got %s)", s.Name, p.SessionName)
+			t.Fatalf("Incorrect session name (expected %s got %s)", s.Name, p.SessionName)
 		}
 	}
 }
@@ -88,13 +88,13 @@ func TestGetAttachedSessionName(t *testing.T) {
 
 	name, err := GetAttachedSessionName()
 	if err != nil {
-		t.Errorf("GetAttachedSessionName: %s", err)
+		t.Fatalf("GetAttachedSessionName: %s", err)
 	}
 
 	// Skipped in local testing because I use it inside tmux
 	if InTravis() {
 		if name != s.Name {
-			t.Errorf("Incorrect session name (expected %s got %s)", s.Name, name)
+			t.Fatalf("Incorrect session name (expected %s got %s)", s.Name, name)
 		}
 	}
 }
