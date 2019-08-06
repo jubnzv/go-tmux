@@ -134,11 +134,18 @@ func (s *Session) NewWindow(name string) (window Window, err error) {
 		return window, err_atoi
 	}
 
+	pane := Pane{
+		SessionId:   s.Id,
+		SessionName: s.Name,
+		WindowId:    id,
+		WindowName:  result[2],
+		WindowIndex: 0}
 	new_window := Window{
 		Name:        result[2],
 		Id:          id,
 		SessionName: s.Name,
-		SessionId:   s.Id}
+		SessionId:   s.Id,
+		Panes:       []Pane{pane}}
 	return new_window, nil
 }
 

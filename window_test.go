@@ -9,6 +9,8 @@ import (
 
 func TestWindowListPanes(t *testing.T) {
 	s := createSession()
+	s.AttachSession()
+	defer s.DettachSession()
 	defer sessionsReaper(s.Name)
 	w, _ := s.NewWindow("test-window")
 	panes, _ := w.ListPanes()
@@ -26,5 +28,20 @@ func TestWindowListPanes(t *testing.T) {
 		if p.WindowName != w.Name {
 			t.Errorf("Incorrect window name (expected %s got %s)", w.Name, p.WindowName)
 		}
+	}
+}
+
+func TestWindowHaveSinglePaneAfterInit(t *testing.T) {
+	s := createSession()
+	s.AttachSession()
+	defer s.DettachSession()
+	defer sessionsReaper(s.Name)
+	w, _ := s.NewWindow("test-window")
+	panes, err := w.ListPanes()
+	if err != nil {
+		t.Fatalf("%s", err)
+	}
+	if len(panes) != 1 {
+		t.Fatalf("Window must have single pane after init (got %d)", len(panes))
 	}
 }
