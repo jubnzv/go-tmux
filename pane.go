@@ -5,6 +5,7 @@ package tmux
 
 import (
 	"regexp"
+    "fmt"
 	"strconv"
 	"strings"
 )
@@ -25,10 +26,11 @@ type Pane struct {
 // * `-s`: target is a session. If neither is given, target is a window (or
 //   the current window).
 func ListPanes(args []string) ([]Pane, error) {
-	args = append([]string{"list-panes", "-P", "-F", "#{session_id}:#{session_name}:#{window_id}:#{window_name}:#{window_index}"}, args...)
+	args = append([]string{"list-panes", "-F", "#{session_id}:#{session_name}:#{window_id}:#{window_name}:#{window_index}"}, args...)
 
 	out, _, err := RunCmd(args)
 	if err != nil {
+        fmt.Printf("RUN ERR: %s", err)
 		return nil, err
 	}
 
@@ -62,4 +64,20 @@ func ListPanes(args []string) ([]Pane, error) {
 	}
 
 	return panes, nil
+}
+
+// Returns current path for this pane.
+func (p *Pane) GetCurrentPath() (string, error) {
+    args := []string{
+        "display-message",
+        "-P", "-F", "#{pane_current_path}"}
+	out, _, err := RunCmd(args)
+	if err != nil {
+		return "", err
+	}
+
+	// Remove trailing CR
+	out = out[:len(out)-1]
+
+    return out, nil
 }
