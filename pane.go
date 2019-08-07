@@ -4,8 +4,8 @@
 package tmux
 
 import (
+	"fmt"
 	"regexp"
-    "fmt"
 	"strconv"
 	"strings"
 )
@@ -30,7 +30,7 @@ func ListPanes(args []string) ([]Pane, error) {
 
 	out, _, err := RunCmd(args)
 	if err != nil {
-        fmt.Printf("RUN ERR: %s", err)
+		fmt.Printf("RUN ERR: %s", err)
 		return nil, err
 	}
 
@@ -68,9 +68,9 @@ func ListPanes(args []string) ([]Pane, error) {
 
 // Returns current path for this pane.
 func (p *Pane) GetCurrentPath() (string, error) {
-    args := []string{
-        "display-message",
-        "-P", "-F", "#{pane_current_path}"}
+	args := []string{
+		"display-message",
+		"-P", "-F", "#{pane_current_path}"}
 	out, _, err := RunCmd(args)
 	if err != nil {
 		return "", err
@@ -79,5 +79,5 @@ func (p *Pane) GetCurrentPath() (string, error) {
 	// Remove trailing CR
 	out = out[:len(out)-1]
 
-    return out, nil
+	return out, nil
 }

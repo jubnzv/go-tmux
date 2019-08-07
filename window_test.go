@@ -8,9 +8,14 @@ import (
 )
 
 func TestWindowListPanes(t *testing.T) {
+	if InTravis() {
+		t.Skip("Skipping this test in travis.")
+	}
+
 	s := createSession()
+	restoreSession()
 	s.AttachSession()
-	defer s.DettachSession()
+	defer restoreSession()
 	defer sessionsReaper(s.Name)
 	w, _ := s.NewWindow("test-window")
 	panes, _ := w.ListPanes()
@@ -32,9 +37,14 @@ func TestWindowListPanes(t *testing.T) {
 }
 
 func TestWindowHaveSinglePaneAfterInit(t *testing.T) {
+	if InTravis() {
+		t.Skip("Skipping this test in travis.")
+	}
+
 	s := createSession()
+	restoreSession()
 	s.AttachSession()
-	defer s.DettachSession()
+	defer restoreSession()
 	defer sessionsReaper(s.Name)
 	w, _ := s.NewWindow("test-window")
 	panes, err := w.ListPanes()

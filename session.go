@@ -53,7 +53,7 @@ func (s *Session) ListWindows() ([]Window, error) {
 	args := []string{
 		"list-windows",
 		"-t", s.Name,
-		"-F", "#{window_id}:#{window_name}"}
+		"-F", "#{window_id}:#{window_name}:#{pane_current_path}"}
 
 	out, _, err := RunCmd(args)
 	if err != nil {
@@ -62,10 +62,10 @@ func (s *Session) ListWindows() ([]Window, error) {
 
 	outLines := strings.Split(out, "\n")
 	windows := []Window{}
-	re := regexp.MustCompile(`@([0-9]+):(.+)`)
+	re := regexp.MustCompile(`@([0-9]+):(.+):(.+)`)
 	for _, line := range outLines {
 		result := re.FindStringSubmatch(line)
-		if len(result) < 3 {
+		if len(result) < 4 {
 			continue
 		}
 		id, err_atoi := strconv.Atoi(result[1])
@@ -74,10 +74,11 @@ func (s *Session) ListWindows() ([]Window, error) {
 		}
 
 		windows = append(windows, Window{
-			Name:        result[2],
-			Id:          id,
-			SessionName: s.Name,
-			SessionId:   s.Id})
+			Name:           result[2],
+			Id:             id,
+			StartDirectory: result[3],
+			SessionName:    s.Name,
+			SessionId:      s.Id})
 	}
 
 	return windows, nil
@@ -87,7 +88,7 @@ func (s *Session) ListWindows() ([]Window, error) {
 func (s *Session) AttachSession() error {
 	args := []string{}
 	// If run inside tmux, switch the current session to the new one.
-	if IsInsideTmux() {
+	if !IsInsideTmux() {
 		args = append(args, "attach-session", "-t", s.Name)
 	} else {
 		args = append(args, "switch-client", "-t", s.Name)
