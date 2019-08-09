@@ -4,7 +4,6 @@
 package tmux
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -30,7 +29,6 @@ func ListPanes(args []string) ([]Pane, error) {
 
 	out, _, err := RunCmd(args)
 	if err != nil {
-		fmt.Printf("RUN ERR: %s", err)
 		return nil, err
 	}
 
