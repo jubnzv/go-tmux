@@ -8,4 +8,6 @@ A library to manage tmux sessions/windows/panes.
 
 ## Usage
 
-See [examples](./examples) directory.
+See [examples](./examples) directory:
+* [create_session](./examples/create-session/create-session.go) – Example that shows how to create a tmux session with user-defined configuration
+* [sessions_manager](./examples/sessions-manager/main.go) – Poor man's tmuxinator implementing using this library.
