@@ -84,7 +84,7 @@ func (c *Configuration) Apply() error {
 
 		// Add windows for created session
 		for _, w := range s.Windows {
-			winId := fmt.Sprintf("%s:%d", s.Name, w.Id)
+			winId := fmt.Sprintf("%s:%d", s.Name, w.ID)
 			args_start_dir := []string{}
 			if len(w.StartDirectory) != 0 {
 				args_start_dir = []string{"-c", w.StartDirectory}

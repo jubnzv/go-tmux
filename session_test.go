@@ -47,13 +47,13 @@ func TestNewWindow(t *testing.T) {
 	// Check created window id
 	found = false
 	for _, w := range ws {
-		if w.Id == window.Id {
+		if w.ID == window.ID {
 			found = true
 			break
 		}
 	}
 	if found == false {
-		t.Fatalf("Can't find created window by id: %d", window.Id)
+		t.Fatalf("Can't find created window by id: %d", window.ID)
 	}
 
 	if len(window.SessionName) == 0 {
@@ -62,8 +62,8 @@ func TestNewWindow(t *testing.T) {
 	if window.SessionName != s.Name {
 		t.Fatalf("New window created in inappropriate session (expected %s got %s)", s.Name, window.SessionName)
 	}
-	if window.SessionId != s.Id {
-		t.Fatalf("New window: incorrect session id (expected %d, got %d)", s.Id, window.SessionId)
+	if window.SessionID != s.Id {
+		t.Fatalf("New window: incorrect session id (expected %d, got %d)", s.Id, window.SessionID)
 	}
 }
 
@@ -73,8 +73,8 @@ func TestSessionListPanes(t *testing.T) {
 	panes, _ := s.ListPanes()
 
 	for _, p := range panes {
-		if p.SessionId != s.Id {
-			t.Fatalf("Incorrect session id (expected %d got %d)", s.Id, p.SessionId)
+		if p.SessionID != s.Id {
+			t.Fatalf("Incorrect session id (expected %d got %d)", s.Id, p.SessionID)
 		}
 		if p.SessionName != s.Name {
 			t.Fatalf("Incorrect session name (expected %s got %s)", s.Name, p.SessionName)

@@ -5,8 +5,8 @@ package tmux
 
 type Window struct {
 	Name           string
-	Id             int
-	SessionId      int
+	ID             int
+	SessionID      int
 	SessionName    string
 	StartDirectory string // Path to window working directory
 	Panes          []Pane // List of panes used in initial window configuration
