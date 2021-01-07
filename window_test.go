@@ -21,14 +21,14 @@ func TestWindowListPanes(t *testing.T) {
 	panes, _ := w.ListPanes()
 
 	for _, p := range panes {
-		if p.SessionID != s.Id {
-			t.Fatalf("Incorrect session id (expected %d got %d)", s.Id, p.SessionID)
+		if p.SessionId != s.Id {
+			t.Fatalf("Incorrect session id (expected %d got %d)", s.Id, p.SessionId)
 		}
 		if p.SessionName != s.Name {
 			t.Fatalf("Incorrect session name (expected %s got %s)", s.Name, p.SessionName)
 		}
-		if p.WindowID != w.ID {
-			t.Fatalf("Incorrect window id (expected %d got %d)", w.ID, p.WindowID)
+		if p.WindowId != w.Id {
+			t.Fatalf("Incorrect window id (expected %d got %d)", w.Id, p.WindowId)
 		}
 		if p.WindowName != w.Name {
 			t.Fatalf("Incorrect window name (expected %s got %s)", w.Name, p.WindowName)

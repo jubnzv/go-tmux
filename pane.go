@@ -16,9 +16,9 @@ const (
 
 type Pane struct {
 	ID          int
-	SessionID   int
+	SessionId   int
 	SessionName string
-	WindowID    int
+	WindowId    int
 	WindowName  string
 	WindowIndex int
 	Active      bool
@@ -80,9 +80,9 @@ func ListPanes(args []string) ([]Pane, error) {
 		}
 
 		panes = append(panes, Pane{
-			SessionID:   sessionID,
+			SessionId:   sessionID,
 			SessionName: result[2],
-			WindowID:    windowID,
+			WindowId:    windowID,
 			WindowName:  result[4],
 			WindowIndex: windowIndex,
 			ID:          paneIndex,

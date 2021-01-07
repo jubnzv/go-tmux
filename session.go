@@ -75,10 +75,10 @@ func (s *Session) ListWindows() ([]Window, error) {
 
 		windows = append(windows, Window{
 			Name:           result[2],
-			ID:             id,
+			Id:             id,
 			StartDirectory: result[3],
 			SessionName:    s.Name,
-			SessionID:      s.Id})
+			SessionId:      s.Id})
 	}
 
 	return windows, nil
@@ -136,16 +136,16 @@ func (s *Session) NewWindow(name string) (window Window, err error) {
 	}
 
 	pane := Pane{
-		SessionID:   s.Id,
+		SessionId:   s.Id,
 		SessionName: s.Name,
-		WindowID:    id,
+		WindowId:    id,
 		WindowName:  result[2],
 		WindowIndex: 0}
 	new_window := Window{
 		Name:        result[2],
-		ID:          id,
+		Id:          id,
 		SessionName: s.Name,
-		SessionID:   s.Id,
+		SessionId:   s.Id,
 		Panes:       []Pane{pane}}
 	return new_window, nil
 }

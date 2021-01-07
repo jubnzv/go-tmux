@@ -32,8 +32,8 @@ func main() {
 
 	// Prepare configuration for a new session with some windows.
 	session := gotmux.Session{Name: "example-session"}
-	w1 := gotmux.Window{Name: "first", ID: 0}
-	w2 := gotmux.Window{Name: "second", ID: 1}
+	w1 := gotmux.Window{Name: "first", Id: 0}
+	w2 := gotmux.Window{Name: "second", Id: 1}
 	session.AddWindow(w1)
 	session.AddWindow(w2)
 	server.AddSession(session)

@@ -141,8 +141,8 @@ func doLoad(loadPath string) error {
 		session.AddWindow(tmux.Window{
 			Name: w.WindowName,
 			// TODO: Read base-index from .tmux.conf
-			ID:             idx + 1,
-			SessionID:      session.Id,
+			Id:             idx + 1,
+			SessionId:      session.Id,
 			SessionName:    session.Name,
 			StartDirectory: w.StartDirectory,
 		})
