@@ -127,3 +127,20 @@ func (p *Pane) Capture() (string, error) {
 	// for capture-pane.
 	return out, nil
 }
+
+// RunCommand runs a command in the pane.
+func (p *Pane) RunCommand(command string) error {
+	args := []string {
+		"send-keys",
+		"-t",
+		fmt.Sprintf("%s:%d.%d", p.SessionName, p.WindowId, p.ID),
+		command,
+		"C-m",
+	}
+	_, stdErr, err := RunCmd(args)
+	if err != nil {
+		return fmt.Errorf("%v: %s", err, stdErr)
+	}
+	return nil
+}
+
