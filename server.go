@@ -1,8 +1,8 @@
 // The MIT License (MIT)
-// Copyright (C) 2019 Georgy Komarov <jubnzv@gmail.com>
+// Copyright (C) 2019-2023 Georgiy Komarov <jubnzv@gmail.com>
 //
-// Represents a tmux server -- object that holds sessions and the windows and
-// panes within them.
+// Represents a tmux server - an object that holds sessions with their windows
+// and panes.
 
 package tmux
 

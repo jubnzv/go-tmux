@@ -1,5 +1,5 @@
 // The MIT License (MIT)
-// Copyright (C) 2019 Georgy Komarov <jubnzv@gmail.com>
+// Copyright (C) 2019-2023 Georgiy Komarov <jubnzv@gmail.com>
 
 // TODO: TMUX_TMPDIR
 
