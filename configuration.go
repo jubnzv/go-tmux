@@ -103,7 +103,7 @@ func (c *Configuration) Apply() error {
 			}
 
 			// Setup panes for created window
-			for idx, _ := range w.Panes {
+			for idx := range w.Panes {
 				// First pane is created automatically, so split existing window
 				if idx != 0 {
 					args = []string{

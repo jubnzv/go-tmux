@@ -10,7 +10,6 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
-	// "fmt"
 )
 
 // Wrapper to tmux CLI that execute command with given arguments and returns
@@ -20,7 +19,6 @@ func RunCmd(args []string) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	// fmt.Printf("Tmux args: %s\n", args)
 	cmd := exec.Command(tmux, args...)
 
 	var stdout, stderr bytes.Buffer
@@ -29,15 +27,12 @@ func RunCmd(args []string) (string, string, error) {
 
 	err = cmd.Run()
 	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-	// fmt.Printf("Tmux out: %s\n", outStr)
-	// fmt.Printf("Tmux err: %s\n", errStr)
 
 	return outStr, errStr, err
 }
 
 // Execute tmux command using syscall execve(2).
 func ExecCmd(args []string) error {
-	// fmt.Print("Tmux exec args: ", args)
 	tmux, err := exec.LookPath("tmux")
 	if err != nil {
 		return err
