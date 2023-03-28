@@ -11,11 +11,23 @@ import (
 	"strings"
 )
 
+// Represents a tmux session:
+// https://github.com/tmux/tmux/wiki/Getting-Started#sessions-windows-and-panes
 type Session struct {
-	Name           string   // Session name
 	Id             int      // Session id
+	Name           string   // Session name
 	StartDirectory string   // Path to window start directory
 	Windows        []Window // List of windows used on session initialization
+}
+
+// Creates a new session object.
+func NewSession(id int, name, startDirectory string, windows []Window) *Session {
+	return &Session{
+		Id:             id,
+		Name:           name,
+		StartDirectory: startDirectory,
+		Windows:        windows,
+	}
 }
 
 // Checks tmux rules for sessions naming. Reference:
@@ -33,22 +45,14 @@ func checkSessionName(name string) bool {
 	return true
 }
 
-// Add window to session configuration. This will change only in-library
-// session representation. Used for initial configuration before creating new
-// session.
+// Adds the window to the session configuration. This will change only
+// in-library session representation. Used for initial configuration before
+// creating a new session.
 func (s *Session) AddWindow(window Window) {
 	s.Windows = append(s.Windows, window)
 }
 
-func (s *Session) InitSession() error {
-	if len(s.Windows) == 0 {
-		return errors.New("Nothing to do.")
-	}
-
-	return nil
-}
-
-// List all windows in the current session.
+// Lists all windows in the current session.
 func (s *Session) ListWindows() ([]Window, error) {
 	args := []string{
 		"list-windows",
@@ -101,7 +105,10 @@ func (s *Session) AttachSession() error {
 	return nil
 }
 
-// Detach from current session.
+// Detaches from the current session.
+// Detaching from the tmux session means that the client exits and detaches
+// from the outside terminal.
+// See: https://github.com/tmux/tmux/wiki/Getting-Started#attaching-and-detaching
 func (s *Session) DettachSession() error {
 	args := []string{
 		"detach-client",
@@ -112,7 +119,7 @@ func (s *Session) DettachSession() error {
 	return nil
 }
 
-// Create a new window.
+// Creates a new window inside this session.
 func (s *Session) NewWindow(name string) (window Window, err error) {
 	args := []string{
 		"new-window",
@@ -150,12 +157,12 @@ func (s *Session) NewWindow(name string) (window Window, err error) {
 	return new_window, nil
 }
 
-// Return list with all panes for this session.
+// Returns list with all panes for this session.
 func (s *Session) ListPanes() ([]Pane, error) {
 	return ListPanes([]string{"-s", "-t", s.Name})
 }
 
-// Return name of attached tmux session.
+// Returns a name of the attached tmux session.
 func GetAttachedSessionName() (string, error) {
 	args := []string{
 		"display-message",

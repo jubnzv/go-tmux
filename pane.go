@@ -10,10 +10,8 @@ import (
 	"strings"
 )
 
-const (
-	paneParts = 7
-)
-
+// Represent a tmux pane:
+// https://github.com/tmux/tmux/wiki/Getting-Started#sessions-windows-and-panes
 type Pane struct {
 	ID          int
 	SessionId   int
@@ -24,13 +22,27 @@ type Pane struct {
 	Active      bool
 }
 
-// Return list of panes. Optional arguments are define the search scope with
+// Creates a new pane object.
+func NewPane(id int, sessionId int, sessionName string, windowId int,
+	windowName string, windowIndex int, active bool) *Pane {
+	return &Pane{
+		ID:          id,
+		SessionId:   sessionId,
+		SessionName: sessionName,
+		WindowId:    windowId,
+		WindowName:  windowName,
+		WindowIndex: windowIndex,
+		Active:      active,
+	}
+}
+
+// Return a list of panes. Optional arguments are define the search scope with
 // tmux command keys (see tmux(1) manpage):
-// list-panes [-as] [-F format] [-t target]
 //
-// * `-a`: target is ignored and all panes on the server are listed
-// * `-s`: target is a session. If neither is given, target is a window (or
-//   the current window).
+// list-panes [-as] [-F format] [-t target]
+//   - `-a`: target is ignored and all panes on the server are listed
+//   - `-s`: target is a session. If neither is given, target is a window (or
+//     the current window).
 func ListPanes(args []string) ([]Pane, error) {
 	format := strings.Join([]string{
 		"#{session_id}",
@@ -52,6 +64,7 @@ func ListPanes(args []string) ([]Pane, error) {
 	outLines := strings.Split(out, "\n")
 	panes := []Pane{}
 	re := regexp.MustCompile(`\$([0-9]+):(.+):@([0-9]+):(.+):([0-9]+):%([0-9]+):([01])`)
+	const paneParts = 7
 
 	for _, line := range outLines {
 		result := re.FindStringSubmatch(line)
@@ -80,12 +93,12 @@ func ListPanes(args []string) ([]Pane, error) {
 		}
 
 		panes = append(panes, Pane{
+			ID:          paneIndex,
 			SessionId:   sessionID,
 			SessionName: result[2],
 			WindowId:    windowID,
 			WindowName:  result[4],
 			WindowIndex: windowIndex,
-			ID:          paneIndex,
 			Active:      result[7] == "1",
 		})
 	}
@@ -130,7 +143,7 @@ func (p *Pane) Capture() (string, error) {
 
 // RunCommand runs a command in the pane.
 func (p *Pane) RunCommand(command string) error {
-	args := []string {
+	args := []string{
 		"send-keys",
 		"-t",
 		fmt.Sprintf("%s:%d.%d", p.SessionName, p.WindowId, p.ID),
@@ -143,4 +156,3 @@ func (p *Pane) RunCommand(command string) error {
 	}
 	return nil
 }
-

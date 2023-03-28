@@ -13,13 +13,24 @@ import (
 	"strings"
 )
 
+// Represents a tmux server:
+// https://github.com/tmux/tmux/wiki/Getting-Started#the-tmux-server-and-clients
 type Server struct {
 	SocketPath string    // Path to tmux server socket
 	SocketName string    // Name of created tmux socket
 	Sessions   []Session // List of sessions used on server initialization
 }
 
-// List all sessions managed by this server.
+// Creates a new server object.
+func NewServer(socketPath, socketName string, sessions []Session) *Server {
+	return &Server{
+		SocketPath: socketPath,
+		SocketName: socketName,
+		Sessions:   sessions,
+	}
+}
+
+// Lists all sessions managed by this server.
 func (s *Server) ListSessions() ([]Session, error) {
 	args := []string{
 		"list-sessions",

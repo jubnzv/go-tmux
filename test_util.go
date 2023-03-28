@@ -20,7 +20,7 @@ func sessionsReaper(namePattern string) {
 	}
 }
 
-// Restore tmux session that was active before test.
+// Restores the session that was active before test.
 func restoreSession() {
 	if !IsInsideTmux() {
 		return
