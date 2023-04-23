@@ -146,7 +146,7 @@ func (p *Pane) RunCommand(command string) error {
 	args := []string{
 		"send-keys",
 		"-t",
-		fmt.Sprintf("%s:%d.%d", p.SessionName, p.WindowId, p.ID),
+		fmt.Sprintf("%%%d", p.ID),
 		command,
 		"C-m",
 	}
