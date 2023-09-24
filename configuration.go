@@ -85,10 +85,19 @@ func (c *Configuration) Apply() error {
 
 		// Add windows for created session
 		for _, w := range s.Windows {
+			// Select start directory for this window
+			// If empty, use StartDirectory from session
+			var windowStartDirectory string
+			if len(w.StartDirectory) != 0 {
+				windowStartDirectory = w.StartDirectory
+			} else if len(s.StartDirectory) != 0 {
+				windowStartDirectory = s.StartDirectory
+			}
 			winId := fmt.Sprintf("%s:%d", s.Name, w.Id)
 			args_start_dir := []string{}
-			if len(w.StartDirectory) != 0 {
-				args_start_dir = []string{"-c", w.StartDirectory}
+
+			if len(windowStartDirectory) != 0 {
+				args_start_dir = []string{"-c", windowStartDirectory}
 			}
 
 			// Create a new window
@@ -111,7 +120,7 @@ func (c *Configuration) Apply() error {
 					args = []string{
 						"split-window",
 						"-t", winId,
-						"-c", w.StartDirectory,
+						"-c", windowStartDirectory,
 					}
 					_, _, err_exec := RunCmd(args)
 					if err_exec != nil {
