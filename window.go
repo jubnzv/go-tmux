@@ -28,7 +28,7 @@ func NewWindow(id int, name string, sessionId int, sessionName string, startDire
 
 // Returns a list with all panes for this window.
 func (w *Window) ListPanes() ([]Pane, error) {
-	return ListPanes([]string{"-s", "-t", w.Name})
+	return ListPanes([]string{"-t", w.Name})
 }
 
 // Adds the pane to the window configuration. This will change only in-library
