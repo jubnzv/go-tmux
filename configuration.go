@@ -72,7 +72,8 @@ func (c *Configuration) Apply() error {
 			attached_key,
 			"-n", initial_window.Name,
 			"-D", // If session with same name exists, attach to it
-			"-s", s.Name}
+			"-s", s.Name,
+		}
 		args = append(args, args_start_dir...)
 		_, err_out, err_exec := RunCmd(args)
 		if err_exec != nil {
@@ -95,7 +96,8 @@ func (c *Configuration) Apply() error {
 				"new-window",
 				"-k", // Destroy windows if already exists
 				"-n", w.Name,
-				"-t", winId}
+				"-t", winId,
+			}
 			args = append(args, args_start_dir...)
 			_, _, err_exec := RunCmd(args)
 			if err_exec != nil {
@@ -109,7 +111,8 @@ func (c *Configuration) Apply() error {
 					args = []string{
 						"split-window",
 						"-t", winId,
-						"-c", w.StartDirectory}
+						"-c", w.StartDirectory,
+					}
 					_, _, err_exec := RunCmd(args)
 					if err_exec != nil {
 						return err_exec
@@ -117,8 +120,15 @@ func (c *Configuration) Apply() error {
 				}
 			}
 
+			// Select layout if defined
+			if len(w.Layout) != 0 {
+				args = []string{"select-layout", "-t", winId, w.Layout}
+				_, _, err_exec := RunCmd(args)
+				if err_exec != nil {
+					return err_exec
+				}
+			}
 		}
-
 	}
 
 	return nil

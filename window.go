@@ -3,6 +3,14 @@
 
 package tmux
 
+const (
+	LayoutEvenHorizontal = "even-horizontal"
+	LayoutEvenVertical   = "even-vertical"
+	LayoutMainHorizontal = "main-horizontal"
+	LayoutMainVertical   = "main-vertical"
+	LayoutTiled          = "tiled"
+)
+
 // Represents a tmux window:
 // https://github.com/tmux/tmux/wiki/Getting-Started#sessions-windows-and-panes
 type Window struct {
@@ -11,6 +19,7 @@ type Window struct {
 	SessionId      int
 	SessionName    string
 	StartDirectory string // Path to window working directory
+	Layout         string // Preset arrangements of panes
 	Panes          []Pane // List of panes used in initial window configuration
 }
 
@@ -23,6 +32,7 @@ func NewWindow(id int, name string, sessionId int, sessionName string, startDire
 		SessionName:    sessionName,
 		StartDirectory: startDirectory,
 		Panes:          panes,
+		Layout:         "",
 	}
 }
 
@@ -36,4 +46,11 @@ func (w *Window) ListPanes() ([]Pane, error) {
 // window.
 func (w *Window) AddPane(pane Pane) {
 	w.Panes = append(w.Panes, pane)
+}
+
+// Sets the window layout. The possible value can be one of the contants:
+// LayoutEvenVertical, LayoutEvenHorizontal, LayoutMainVertical,  LayoutMainHorizontal, LayoutTiled
+// See: https://www.man7.org/linux/man-pages/man1/tmux.1.html#WINDOWS_AND_PANES
+func (w *Window) SetLayout(layout string) {
+	w.Layout = layout
 }
