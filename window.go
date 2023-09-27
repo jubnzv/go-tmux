@@ -3,6 +3,8 @@
 
 package tmux
 
+import "fmt"
+
 const (
 	LayoutEvenHorizontal = "even-horizontal"
 	LayoutEvenVertical   = "even-vertical"
@@ -53,4 +55,18 @@ func (w *Window) AddPane(pane Pane) {
 // See: https://www.man7.org/linux/man-pages/man1/tmux.1.html#WINDOWS_AND_PANES
 func (w *Window) SetLayout(layout string) {
 	w.Layout = layout
+}
+
+// Selects the window.
+func (w *Window) Select() error {
+	args := []string{
+		"select-window",
+		"-t",
+		fmt.Sprintf("%%%d", w.Id),
+	}
+	_, stdErr, err := RunCmd(args)
+	if err != nil {
+		return fmt.Errorf("%v: %s", err, stdErr)
+	}
+	return nil
 }
