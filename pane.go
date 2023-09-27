@@ -24,7 +24,8 @@ type Pane struct {
 
 // Creates a new pane object.
 func NewPane(id int, sessionId int, sessionName string, windowId int,
-	windowName string, windowIndex int, active bool) *Pane {
+	windowName string, windowIndex int, active bool,
+) *Pane {
 	return &Pane{
 		ID:          id,
 		SessionId:   sessionId,
@@ -110,7 +111,8 @@ func ListPanes(args []string) ([]Pane, error) {
 func (p *Pane) GetCurrentPath() (string, error) {
 	args := []string{
 		"display-message",
-		"-P", "-F", "#{pane_current_path}"}
+		"-P", "-F", "#{pane_current_path}",
+	}
 	out, _, err := RunCmd(args)
 	if err != nil {
 		return "", err
@@ -149,6 +151,20 @@ func (p *Pane) RunCommand(command string) error {
 		fmt.Sprintf("%%%d", p.ID),
 		command,
 		"C-m",
+	}
+	_, stdErr, err := RunCmd(args)
+	if err != nil {
+		return fmt.Errorf("%v: %s", err, stdErr)
+	}
+	return nil
+}
+
+// Selects the pane.
+func (p *Pane) Select() error {
+	args := []string{
+		"select-pane",
+		"-t",
+		fmt.Sprintf("%%%d", p.ID),
 	}
 	_, stdErr, err := RunCmd(args)
 	if err != nil {
