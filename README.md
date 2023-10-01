@@ -1,6 +1,6 @@
 # go-tmux
 
-![Build](https://github.com/github/docs/actions/workflows/build.yml/badge.svg)
+![Build](https://github.com/jubnzv/go-tmux/actions/workflows/build.yml/badge.svg)
 [![GoDoc](https://godoc.org/github.com/jubnzv/go-tmux?status.svg)](https://godoc.org/github.com/jubnzv/go-tmux)
 
 A Go library for managing tmux sessions, windows, and panes.
