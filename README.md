@@ -1,6 +1,6 @@
 # go-tmux
 
-[![codecov](https://codecov.io/gh/jubnzv/go-tmux/branch/master/graph/badge.svg)](https://codecov.io/gh/jubnzv/go-tmux)
+[![Build](https://github.com/OWNER/REPOSITORY/actions/workflows/WORKFLOW-FILE/badge.svg)](https://github.com/jubnzv/go-tmux)
 [![GoDoc](https://godoc.org/github.com/jubnzv/go-tmux?status.svg)](https://godoc.org/github.com/jubnzv/go-tmux)
 
 A library to manage tmux sessions/windows/panes.
