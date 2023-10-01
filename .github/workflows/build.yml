@@ -1,0 +1,32 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.20']
+
+    steps:
+      - name: Install Dependencies
+        run: sudo apt-get install -y tmux
+      - uses: actions/checkout@v3
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Build
+        run: go build -v ./...
+
+      # TODO: It cannot be executed on Github actions in tmux because of the following error:
+      #
+      # open terminal failed: not a terminal
+      # exit status 1
+      #
+      # - name: Run unit tests
+      #   run: |
+      #     yes "yes" | tmux new-session -d || true # $? == 0
+      #     go test
