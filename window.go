@@ -62,7 +62,7 @@ func (w *Window) Select() error {
 	args := []string{
 		"select-window",
 		"-t",
-		fmt.Sprintf("%%%d", w.Id),
+		fmt.Sprintf("@%d", w.Id),
 	}
 	_, stdErr, err := RunCmd(args)
 	if err != nil {
