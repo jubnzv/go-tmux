@@ -36,10 +36,10 @@ func (s *Server) ListSessions() ([]Session, error) {
 		"list-sessions",
 		"-F", "#{session_id}:#{session_name}"}
 	if s.SocketPath != "" {
-		args = append(args, "-S", s.SocketPath)
+		args = append([]string{"-S", s.SocketPath}, args...)
 	}
 	if s.SocketName != "" {
-		args = append(args, "-L", s.SocketName)
+		args = append([]string{"-L", s.SocketName}, args...)
 	}
 
 	out, _, err := RunCmd(args)
