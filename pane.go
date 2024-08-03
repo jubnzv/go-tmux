@@ -13,13 +13,14 @@ import (
 // Represent a tmux pane:
 // https://github.com/tmux/tmux/wiki/Getting-Started#sessions-windows-and-panes
 type Pane struct {
-	ID          int
+	Id          int
 	SessionId   int
 	SessionName string
 	WindowId    int
 	WindowName  string
 	WindowIndex int
 	Active      bool
+	Index       int
 }
 
 // Creates a new pane object.
@@ -27,7 +28,7 @@ func NewPane(id int, sessionId int, sessionName string, windowId int,
 	windowName string, windowIndex int, active bool,
 ) *Pane {
 	return &Pane{
-		ID:          id,
+		Id:          id,
 		SessionId:   sessionId,
 		SessionName: sessionName,
 		WindowId:    windowId,
@@ -53,6 +54,7 @@ func ListPanes(args []string) ([]Pane, error) {
 		"#{window_index}",
 		"#{pane_id}",
 		"#{pane_active}",
+		"#{pane_index}",
 	}, ":")
 
 	args = append([]string{"list-panes", "-F", format}, args...)
@@ -64,8 +66,8 @@ func ListPanes(args []string) ([]Pane, error) {
 
 	outLines := strings.Split(out, "\n")
 	panes := []Pane{}
-	re := regexp.MustCompile(`\$([0-9]+):(.+):@([0-9]+):(.+):([0-9]+):%([0-9]+):([01])`)
-	const paneParts = 7
+	re := regexp.MustCompile(`\$([0-9]+):(.+):@([0-9]+):(.+):([0-9]+):%([0-9]+):([01]):([0-9]+)`)
+	const paneParts = 8
 
 	for _, line := range outLines {
 		result := re.FindStringSubmatch(line)
@@ -88,19 +90,25 @@ func ListPanes(args []string) ([]Pane, error) {
 			return nil, errAtoi
 		}
 
-		paneIndex, errAtoi := strconv.Atoi(result[6])
+		paneId, errAtoi := strconv.Atoi(result[6])
+		if errAtoi != nil {
+			return nil, errAtoi
+		}
+
+		paneIndex, errAtoi := strconv.Atoi(result[8])
 		if errAtoi != nil {
 			return nil, errAtoi
 		}
 
 		panes = append(panes, Pane{
-			ID:          paneIndex,
+			Id:          paneId,
 			SessionId:   sessionID,
 			SessionName: result[2],
 			WindowId:    windowID,
 			WindowName:  result[4],
 			WindowIndex: windowIndex,
 			Active:      result[7] == "1",
+			Index:       paneIndex,
 		})
 	}
 
@@ -124,11 +132,27 @@ func (p *Pane) GetCurrentPath() (string, error) {
 	return out, nil
 }
 
+// Log the pane buffer to a file
+func (p *Pane) Pipe(path string) (string, error) {
+	args := []string{
+		"pipe-pane",
+		"-t", fmt.Sprintf("%s:%s.%d", p.SessionName, p.WindowName, p.Index),
+		"-o", fmt.Sprintf("cat >>%s", path),
+	}
+
+	out, stdErr, err := RunCmd(args)
+	if err != nil {
+		return stdErr, err
+	}
+
+	return out, nil
+}
+
+// Capture the pane buffer
 func (p *Pane) Capture() (string, error) {
 	args := []string{
 		"capture-pane",
-		"-t",
-		fmt.Sprintf("%%%d", p.ID),
+		"-t", fmt.Sprintf("%s:%s.%d", p.SessionName, p.WindowName, p.Index),
 		"-p",
 	}
 
@@ -147,8 +171,7 @@ func (p *Pane) Capture() (string, error) {
 func (p *Pane) RunCommand(command string) error {
 	args := []string{
 		"send-keys",
-		"-t",
-		fmt.Sprintf("%%%d", p.ID),
+		"-t", fmt.Sprintf("%s:%s.%d", p.SessionName, p.WindowName, p.Index),
 		command,
 		"C-m",
 	}
@@ -163,8 +186,7 @@ func (p *Pane) RunCommand(command string) error {
 func (p *Pane) Select() error {
 	args := []string{
 		"select-pane",
-		"-t",
-		fmt.Sprintf("%%%d", p.ID),
+		"-t", fmt.Sprintf("%s:%s.%d", p.SessionName, p.WindowName, p.Index),
 	}
 	_, stdErr, err := RunCmd(args)
 	if err != nil {
