@@ -74,7 +74,8 @@ func (c *Configuration) Apply() error {
 		}
 
 		// Add windows for created session
-		for wi, w := range s.Windows {
+		var win []Window
+		for _, w := range s.Windows {
 			// Select start directory for this window
 			// If empty, use StartDirectory from session
 			if len(w.StartDirectory) == 0 && len(s.StartDirectory) != 0 {
@@ -106,23 +107,19 @@ func (c *Configuration) Apply() error {
 			w.SessionId = s.Id
 
 			// Setup panes for created window
-			panes, _ := w.ListPanes()
-			if len(w.Panes) > 1 {
-				w.Panes = append([]Pane{panes[0]}, w.Panes[1:]...)
-			} else {
-				w.Panes = panes
-			}
+			orig_panes := w.Panes
 
-			for idx := range w.Panes {
+			w.Panes, _ = w.ListPanes()
+
+			for idx := range orig_panes {
 				// First pane is created automatically, so split existing window
-				if idx != 0 {
+				if idx > 0 {
 					// Create a new pane
 					pane, err := w.SplitPane()
 
 					if err != nil {
 						return err
 					}
-
 					w.Panes[idx] = pane
 				}
 			}
@@ -136,9 +133,10 @@ func (c *Configuration) Apply() error {
 				}
 			}
 
-			s.Windows[wi] = w
+			win = append(win, w)
 		}
 
+		c.Sessions[si].Windows = win
 		c.Sessions[si] = s
 
 	}
