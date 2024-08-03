@@ -120,13 +120,15 @@ func (s *Session) DettachSession() error {
 }
 
 // Creates a new window inside this session.
-func (s *Session) NewWindow(name string) (window Window, err error) {
-	args := []string{
+func (s *Session) NewWindow(name string, args ...string) (window Window, err error) {
+	args = append([]string{
 		"new-window",
 		"-d",
 		"-t", fmt.Sprintf("%s:", s.Name),
 		"-n", name,
-		"-F", "#{window_id}:#{window_name}", "-P"}
+		"-F", "#{window_id}:#{window_name}", "-P"},
+		args...)
+
 	out, _, err_exec := RunCmd(args)
 	if err_exec != nil {
 		return window, err_exec
