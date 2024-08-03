@@ -96,5 +96,8 @@ func (w *Window) SplitPane() (pane Pane, err error) {
 		return pane, err
 	}
 
+	// Append the Pane struct to the Panes slice in the Window struct.
+	w.Panes = append(w.Panes, panes[len(panes)-1])
+
 	return panes[len(panes)-1], nil
 }

@@ -156,6 +156,10 @@ func (s *Session) NewWindow(name string, args ...string) (window Window, err err
 		SessionName: s.Name,
 		SessionId:   s.Id,
 		Panes:       []Pane{pane}}
+
+	// Append the Window struct to the Windows slice in the Session struct.
+	s.Windows = append(s.Windows, new_window)
+
 	return new_window, nil
 }
 

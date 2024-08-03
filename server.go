@@ -112,6 +112,10 @@ func (s *Server) NewSession(name string, args ...string) (session Session, err e
 	}
 
 	session = Session{Name: result[2], Id: id}
+
+	// Append the Session struct to the Sessions slice in the Server struct.
+	s.Sessions = append(s.Sessions, session)
+
 	return session, nil
 }
 
