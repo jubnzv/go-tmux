@@ -9,7 +9,6 @@ package tmux
 import (
 	"errors"
 	"fmt"
-	"strings"
 )
 
 type Configuration struct {
@@ -50,94 +49,98 @@ func (c *Configuration) Apply() error {
 	}
 
 	// Initialize sessions
-	for _, s := range c.Sessions {
+	for si, s := range c.Sessions {
 		// Set initial window for a new session
 		initial_window := s.Windows[0]
 
+		extra_args := []string{"-n", initial_window.Name}
+
 		// Select start directory for a session
-		args_start_dir := []string{}
 		if len(s.StartDirectory) != 0 {
-			args_start_dir = []string{"-c", s.StartDirectory}
+			extra_args = append(extra_args, "-c", s.StartDirectory)
 		}
 
-		// Should this session be attached after init?
-		attached_key := "-d"
+		session, err := c.Server.NewSession(s.Name, extra_args...)
+
+		if err != nil {
+			return err
+		}
+
+		s.Name = session.Name
+		s.Id = session.Id
+
 		if s == c.ActiveSession {
-			attached_key = ""
-		}
-
-		// Start a new session
-		args := []string{
-			"new-session",
-			attached_key,
-			"-n", initial_window.Name,
-			"-D", // If session with same name exists, attach to it
-			"-s", s.Name,
-		}
-		args = append(args, args_start_dir...)
-		_, err_out, err_exec := RunCmd(args)
-		if err_exec != nil {
-			// It's okay, if session already exists.
-			if !strings.Contains(err_out, "exit status 1") {
-				return err_exec
-			}
+			s.AttachSession()
 		}
 
 		// Add windows for created session
-		for _, w := range s.Windows {
+		for wi, w := range s.Windows {
 			// Select start directory for this window
 			// If empty, use StartDirectory from session
-			var windowStartDirectory string
-			if len(w.StartDirectory) != 0 {
-				windowStartDirectory = w.StartDirectory
-			} else if len(s.StartDirectory) != 0 {
-				windowStartDirectory = s.StartDirectory
-			}
-			winId := fmt.Sprintf("%s:%d", s.Name, w.Id)
-			args_start_dir := []string{}
-
-			if len(windowStartDirectory) != 0 {
-				args_start_dir = []string{"-c", windowStartDirectory}
+			if len(w.StartDirectory) == 0 && len(s.StartDirectory) != 0 {
+				w.StartDirectory = s.StartDirectory
 			}
 
-			// Create a new window
-			args = []string{
-				"new-window",
-				"-k", // Destroy windows if already exists
-				"-n", w.Name,
-				"-t", winId,
+			if w.Name == initial_window.Name {
+				w.Name = initial_window.Name
+				w.Id = 0
+			} else {
+				extra_args = []string{}
+
+				if len(w.StartDirectory) != 0 {
+					extra_args = append(extra_args, "-c", w.StartDirectory)
+				}
+
+				// Create a new window
+				window, err := s.NewWindow(w.Name, extra_args...)
+
+				if err != nil {
+					return err
+				}
+
+				w.Name = window.Name
+				w.Id = window.Id
 			}
-			args = append(args, args_start_dir...)
-			_, _, err_exec := RunCmd(args)
-			if err_exec != nil {
-				return err_exec
-			}
+
+			w.SessionName = s.Name
+			w.SessionId = s.Id
 
 			// Setup panes for created window
+			panes, _ := w.ListPanes()
+			if len(w.Panes) > 1 {
+				w.Panes = append([]Pane{panes[0]}, w.Panes[1:]...)
+			} else {
+				w.Panes = panes
+			}
+
 			for idx := range w.Panes {
 				// First pane is created automatically, so split existing window
 				if idx != 0 {
-					args = []string{
-						"split-window",
-						"-t", winId,
-						"-c", windowStartDirectory,
+					// Create a new pane
+					pane, err := w.SplitPane()
+
+					if err != nil {
+						return err
 					}
-					_, _, err_exec := RunCmd(args)
-					if err_exec != nil {
-						return err_exec
-					}
+
+					w.Panes[idx] = pane
 				}
 			}
 
 			// Select layout if defined
 			if len(w.Layout) != 0 {
-				args = []string{"select-layout", "-t", winId, w.Layout}
+				args := []string{"select-layout", "-t", string(w.Id), w.Layout}
 				_, _, err_exec := RunCmd(args)
 				if err_exec != nil {
 					return err_exec
 				}
 			}
+
+			s.Windows[wi] = w
 		}
+
+		c.Sessions[si] = s
+
 	}
 
 	return nil
