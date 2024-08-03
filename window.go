@@ -3,7 +3,10 @@
 
 package tmux
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const (
 	LayoutEvenHorizontal = "even-horizontal"
@@ -40,7 +43,7 @@ func NewWindow(id int, name string, sessionId int, sessionName string, startDire
 
 // Returns a list with all panes for this window.
 func (w *Window) ListPanes() ([]Pane, error) {
-	return ListPanes([]string{"-t", w.Name})
+	return ListPanes([]string{fmt.Sprintf("-t%s:%s", w.SessionName, w.Name)})
 }
 
 // Adds the pane to the window configuration. This will change only in-library
@@ -69,4 +72,29 @@ func (w *Window) Select() error {
 		return fmt.Errorf("%v: %s", err, stdErr)
 	}
 	return nil
+}
+
+// Creates a pane inside this window.
+func (w *Window) SplitPane() (pane Pane, err error) {
+
+	args := []string{
+		"split-window",
+		"-t", fmt.Sprintf("%s:%s", w.SessionName, w.Name),
+		"-c", w.StartDirectory,
+		"-F", "#{pane_id}"}
+
+	_, err_out, err_exec := RunCmd(args)
+	if err_exec != nil {
+		// It's okay, if session already exists.
+		if !strings.Contains(err_out, "exit status 1") {
+			return pane, err_exec
+		}
+	}
+
+	panes, err := w.ListPanes()
+	if err_exec != nil {
+		return pane, err
+	}
+
+	return panes[len(panes)-1], nil
 }
