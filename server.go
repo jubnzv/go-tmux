@@ -78,17 +78,19 @@ func (s *Server) AddSession(session Session) {
 // Session always will be detached after creation. Call AttachSession to attach
 // it. If session already exists, this function return an error. Check session
 // with HaveSession before running it if you need it.
-func (s *Server) NewSession(name string) (session Session, err error) {
+func (s *Server) NewSession(name string, args ...string) (session Session, err error) {
 	if checkSessionName(name) == false {
 		return session, errors.New("Bad session name")
 	}
 
-	args := []string{
+	args = append([]string{
 		"new-session",
 		"-d",
 		"-D",
 		"-s", name,
-		"-P", "-F", "#{session_id}:#{session_name}"}
+		"-P",
+		"-F", "#{session_id}:#{session_name}"},
+		args...)
 
 	out, err_out, err_exec := RunCmd(args)
 	if err_exec != nil {
