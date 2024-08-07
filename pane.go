@@ -13,7 +13,7 @@ import (
 // Represent a tmux pane:
 // https://github.com/tmux/tmux/wiki/Getting-Started#sessions-windows-and-panes
 type Pane struct {
-	Id          int
+	ID          int
 	SessionId   int
 	SessionName string
 	WindowId    int
@@ -28,7 +28,7 @@ func NewPane(id int, sessionId int, sessionName string, windowId int,
 	windowName string, windowIndex int, active bool,
 ) *Pane {
 	return &Pane{
-		Id:          id,
+		ID:          id,
 		SessionId:   sessionId,
 		SessionName: sessionName,
 		WindowId:    windowId,
@@ -101,7 +101,7 @@ func ListPanes(args []string) ([]Pane, error) {
 		}
 
 		panes = append(panes, Pane{
-			Id:          paneId,
+			ID:          paneId,
 			SessionId:   sessionID,
 			SessionName: result[2],
 			WindowId:    windowID,

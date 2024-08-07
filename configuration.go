@@ -94,7 +94,6 @@ func (c *Configuration) Apply() error {
 
 				// Create a new window
 				window, err := s.NewWindow(w.Name, extra_args...)
-
 				if err != nil {
 					return err
 				}
@@ -108,15 +107,12 @@ func (c *Configuration) Apply() error {
 
 			// Setup panes for created window
 			orig_panes := w.Panes
-
 			w.Panes, _ = w.ListPanes()
-
 			for idx := range orig_panes {
 				// First pane is created automatically, so split existing window
 				if idx > 0 {
 					// Create a new pane
 					pane, err := w.SplitPane()
-
 					if err != nil {
 						return err
 					}
@@ -138,7 +134,6 @@ func (c *Configuration) Apply() error {
 
 		c.Sessions[si].Windows = win
 		c.Sessions[si] = s
-
 	}
 
 	return nil

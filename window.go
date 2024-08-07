@@ -76,13 +76,11 @@ func (w *Window) Select() error {
 
 // Creates a pane inside this window.
 func (w *Window) SplitPane() (pane Pane, err error) {
-
 	args := []string{
 		"split-window",
 		"-t", fmt.Sprintf("%s:%s", w.SessionName, w.Name),
 		"-c", w.StartDirectory,
 		"-F", "#{pane_id}"}
-
 	_, err_out, err_exec := RunCmd(args)
 	if err_exec != nil {
 		// It's okay, if session already exists.
