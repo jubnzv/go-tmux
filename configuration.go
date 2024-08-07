@@ -122,7 +122,7 @@ func (c *Configuration) Apply() error {
 
 			// Select layout if defined
 			if len(w.Layout) != 0 {
-				args := []string{"select-layout", "-t", string(w.Id), w.Layout}
+				args := []string{"select-layout", "-t", fmt.Sprintf("%v", w.Id), w.Layout}
 				_, _, err_exec := RunCmd(args)
 				if err_exec != nil {
 					return err_exec
